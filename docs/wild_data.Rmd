@@ -1,0 +1,61 @@
+---
+title: "wild data"
+author: "Daniel Kerstan"
+date: "8/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+```{r}
+mack_verts <- read_csv(here::here("data", "AS00601.csv"))
+
+mack_verts <- clean_names(mack_verts)
+
+mack_verts
+
+```
+
+
+```{r}
+mc_wt_5 <- mack_verts[5, "weight"]
+
+mc_wt_5
+
+
+mc_length_8_20 <- mack_verts[8:20, "length1"]
+
+mc_length_8_20
+
+mc_dates <- c(mack_verts$sampledate)
+
+mc_dates
+
+mc_salamanders <- mack_verts %>% dplyr::filter(species == "DITE")
+
+mc_salamanders
+
+ggplot(data = mc_salamanders, aes(x = weight, y = length1)) + geom_point(aes(color = year), size = 1, alpha = 0.5) + 
+  labs(title = "Salamander Size", x = "Weight (g)", y = "Snout-vent length  (mm)") + theme_dark()
+
+ggsave(here("figs", "salamander_size.png"))
+
+```
+
+## cutthroat plot
+```{r}
+mc_trout <- mack_verts %>% filter(species == "ONCL")
+mc_trout
+
+cutthroat_size <- ggplot(data = mc_trout, aes(x = weight, y = length1)) + geom_point(aes(color = reach)) + labs(title = "Cutthroat Size", x = "Weight (g)", y = "Length (mm)") + facet_wrap(~reach)
+
+cutthroat_size
+
+ggsave(here("figs", "cutthroat_size.png"), plot = cutthroat_size)
+```
+
